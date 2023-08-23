@@ -10,6 +10,6 @@ search = '{0}/0{1}'.format(data_year,data_mon)
 print(search)
 
 #search ='2023/07'
-#print(search)
+print(today)
 bkp_date = dt.datetime.today().strftime('%Y%m%d')
 #print("bkp_date : ", bkp_date)
