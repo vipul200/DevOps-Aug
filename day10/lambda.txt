@@ -1,0 +1,42 @@
+import os
+import json
+import boto3
+from github import Github
+
+def lambda_handler(event, context):
+    # Parse GitHub webhook payload
+    payload = json.loads(event['body'])
+
+    # Check if it's a push event
+    if 'push' in payload['action']:
+        # Replace with your GitHub token or use environment variables for security
+        github_token = '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'
+        github_repo = 'vipul200/DevOps-Aug'  # Replace with your GitHub repository
+        s3_bucket = 'vipulbt'
+
+        # Initialize GitHub and S3 clients
+        github = Github(github_token)
+        s3 = boto3.client('s3')
+
+        # Iterate through the added/modified files
+        for file in payload['push']['changes']:
+            filename = file['new']['name']
+            file_url = f'https://github.com/{github_repo}/raw/main/{filename}'
+
+            # Download the file from GitHub
+            response = requests.get(file_url)
+            content = response.content
+
+            # Upload the file to S3
+            s3_key = f'path/to/your/s3-folder/{filename}'
+            s3.upload_fileobj(io.BytesIO(content), s3_bucket, s3_key)
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps('File copied to S3 successfully')
+        }
+    else:
+        return {
+            'statusCode': 200,
+            'body': json.dumps('No action required for this event')
+        }
